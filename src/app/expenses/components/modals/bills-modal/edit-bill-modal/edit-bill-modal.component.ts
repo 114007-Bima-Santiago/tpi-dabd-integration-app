@@ -5,7 +5,6 @@ import {
   AbstractControl,
   AsyncValidatorFn,
   FormBuilder,
-  FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
@@ -41,7 +40,7 @@ import { NewCategoryModalComponent } from '../../bills/new-category-modal/new-ca
 })
 export class EditBillModalComponent implements OnInit {
   private activeModal = inject(NgbActiveModal);
-  private fb = inject(FormBuilder); // Usamos FormBuilder en lugar de new FormGroup
+  private fb = inject(FormBuilder);
   private supplierService = inject(ProviderService);
   private categoryService = inject(CategoryService);
   private periodService = inject(PeriodService);
@@ -61,7 +60,6 @@ export class EditBillModalComponent implements OnInit {
   billTypesList: BillType[] = [];
 
   constructor() {
-    // Inicializamos el Formulario usando FormBuilder
     this.updateBill = this.fb.group({
       expenditureId: [''],
       date: [null, {
@@ -119,7 +117,7 @@ export class EditBillModalComponent implements OnInit {
         this.billTypesList = this.sortBillTypeAlphabetically(types);
       });
     } catch (error) {
-      console.error('Error al cargar las listas', error);
+      this.toastService.sendError("Error al cargar las listas");
     }
   }
 
@@ -175,8 +173,6 @@ export class EditBillModalComponent implements OnInit {
 
   onSubmit() {
     if (this.updateBill.valid) {
-      console.log(`Valor de bill a actualizar:${JSON.stringify(this.updateBill.value)}`);
-      console.log(`Valor de bill a actualizar:${JSON.stringify(this.bill?.expenditureId)}`);
       const requestBill = {
         description: this.updateBill.value.description,
         amount: this.updateBill.value.amount,
@@ -191,13 +187,11 @@ export class EditBillModalComponent implements OnInit {
       };
 
       this.billService.updateBill(requestBill, this.bill?.expenditureId).subscribe({
-        next: (response: any) => {
-          console.log('Actualizado correctamente', response);
+        next: () => {
           this.toastService.sendSuccess('El gasto se ha actualizado correctamente.');
           this.activeModal.close('updated');
         },
-        error: (error: any) => {
-          console.error('Error en el post', error);
+        error: () => {
           this.toastService.sendError('Ha ocurrido un error al actualizar el gasto. Por favor, inténtelo de nuevo.');
         },
       });
@@ -243,12 +237,10 @@ export class EditBillModalComponent implements OnInit {
 
       this.categoryService.addCategory(newCategory).subscribe({
         next: (response: any) => {
-          console.log('Añadido correctamente', response);
           this.showModal('Éxito', 'La categoria se ha añadido correctamente.');
           this.resetForm();
         },
         error: (error: any) => {
-          console.error('Error en el post', error);
           if (error.status === 409) {
             this.showModal('Error', 'Ya existe una categoría con este nombre. Por favor, elija un nombre diferente.');
           } else {
@@ -257,7 +249,6 @@ export class EditBillModalComponent implements OnInit {
         },
       });
     } else {
-      console.log('Formulario inválido');
       this.showModal('Error', 'Por favor, complete todos los campos requeridos correctamente.');
     }
     this.modalService.dismissAll();

@@ -26,11 +26,11 @@
 <ng-template #statusTemplate let-item>
   <div class="d-flex">
     @if(item.status == 'Activo'){
-      <i class="bi bi-check2-circle text-success fs-3"></i>
+    <i class="bi bi-check2-circle text-success fs-3"></i>
     } @else if(item.status == 'Cancelado'){
-      <i class="bi bi-x-circle text-danger fs-4"></i>
+    <i class="bi bi-x-circle text-danger fs-4"></i>
     } @else {
-      <i class="bi bi-exclamation-circle text-primary fs-4"></i>
+    <i class="bi bi-exclamation-circle text-primary fs-4"></i>
 
     }
   </div>
@@ -39,43 +39,38 @@
 <ng-template #actionsTemplate let-bill>
   @if(bill.period.state !== 'Cerrado') {
 
-    <td style="
+  <td style="
       display: flex;
       flex-direction: row;
       gap: 2px;
     ">
-      <div class="btn-group" ngbDropdown>
-        <button
-          type="button"
-          class="btn btn-sm btn-secondary"
-          ngbDropdownToggle
-          aria-expanded="false"
-        >
-          <i class="bi bi-three-dots-vertical"></i>
+    <div class="btn-group" ngbDropdown>
+      <button type="button" class="btn btn-sm btn-secondary" ngbDropdownToggle aria-expanded="false">
+        <i class="bi bi-three-dots-vertical"></i>
+      </button>
+      <div ngbDropdownMenu>
+        <button type="button" class="dropdown-item" (click)="viewBill(bill)">
+          Detalles
         </button>
-        <div ngbDropdownMenu>
-          <button type="button" class="dropdown-item" (click)="viewBill(bill)">
-            Detalles
-          </button>
-          <button type="button" class="dropdown-item" (click)="editBill(bill)">
-            Editar
-          </button>
-          @if(bill.status === 'Activo') {
-            <button type="button" class="dropdown-item" (click)="deleteBill(bill)">
-              Eliminar
-            </button>
-          } @else {
-            <button type="button" class="dropdown-item" (click)="activeBill(bill)">
-              Activar
-            </button>
-          }
-        </div>
+        <button type="button" class="dropdown-item" (click)="editBill(bill)">
+          Editar
+        </button>
+        @if(bill.status === 'Activo') {
+        <button type="button" class="dropdown-item" (click)="deleteBill(bill)">
+          Eliminar
+        </button>
+        } @else {
+        <button type="button" class="dropdown-item" (click)="activeBill(bill)">
+          Activar
+        </button>
+        }
       </div>
-    </td>
+    </div>
+  </td>
   } @else {
-    <button type="button" class="btn btn-primary" (click)="viewBill(bill)">
-      <i class="bi bi-eye"></i>
-    </button>
+  <button type="button" class="btn btn-primary" (click)="viewBill(bill)">
+    <i class="bi bi-eye"></i>
+  </button>
   }
 </ng-template>
 
@@ -90,6 +85,7 @@
     onPageSizeChange: onPageSizeChange
   }" [showSearchBar]="true" [isLoading]="isLoading" (searchValueChange)="onSearchValueChange($event)"
     (headerButtonClick)="nuevoGasto()" [showHeaderButton]="true" (filterValueChange)="onFilterValueChange($event)"
-    [tableFilters]="filterConfig" (pdfButtonClick)="imprimir() "[headerButtonIcon]="'bi bi-plus'" [headerButtonText]="''" [getAllItems]="getAllItems">
+    [tableFilters]="filterConfig" (pdfButtonClick)="imprimir() " [headerButtonIcon]="'bi bi-plus'"
+    [headerButtonText]="''" [getAllItems]="getAllItems">
   </app-table>
 </app-main-container>

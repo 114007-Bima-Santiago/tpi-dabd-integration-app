@@ -73,7 +73,6 @@ export class ExpensesListBillsComponent implements OnInit {
   periodsList: { value: string; label: string }[] = [];
   typesList: { value: string; label: string }[] = [];
 
-  private pageSize = 10;
   totalItems = 0;
   page = 1;
   size = 10;
@@ -249,7 +248,6 @@ export class ExpensesListBillsComponent implements OnInit {
   periodService = inject(PeriodService);
   providerService = inject(ProviderService);
   modalService = inject(NgbModal);
-  private fb = inject(FormBuilder);
   private router = inject(Router);
 
   getCategories() {
@@ -531,39 +529,6 @@ export class ExpensesListBillsComponent implements OnInit {
         );
       });
   }
-
-  // downloadTable() {
-  //   const filters = this.filters.value;
-  //   this.billService
-  //     .getAllBillsAndPaginationAny(
-  //       this.page,
-  //       this.size,
-  //       filters.selectedPeriod?.valueOf(),
-  //       filters.selectedCategory?.valueOf(),
-  //       filters.selectedSupplier?.valueOf(),
-  //       filters.selectedType?.valueOf(),
-  //       filters.selectedProvider?.valueOf().toString(),
-  //       filters.selectedStatus?.valueOf().toString(),
-  //     )
-  //     .subscribe((bills) => {
-  //       const data = bills.content.map((bill) => ({
-  //         Periodo: `${bill?.period?.month} / ${bill?.period?.year}`,
-  //         'Monto Total': `$ ${bill.amount}`,
-  //         Fecha: bill.date,
-  //         Proveedor: bill.supplier?.name,
-  //         Estado: bill.status,
-  //         Categoría: bill.category.name,
-  //         'Tipo de gasto': bill.bill_type?.name,
-  //         Descripción: bill.description,
-  //       }));
-
-  //       const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-  //       const wb: XLSX.WorkBook = XLSX.utils.book_new();
-  //       XLSX.utils.book_append_sheet(wb, ws, 'Expenses');
-  //       XLSX.writeFile(wb, this.fileName);
-  //     });
-  // }
-
 
   getAllItems = () => {
     return this.billService.getAllBillsAndPaginationAny(

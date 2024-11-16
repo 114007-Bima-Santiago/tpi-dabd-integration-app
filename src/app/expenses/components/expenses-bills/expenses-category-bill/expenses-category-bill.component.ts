@@ -1,17 +1,17 @@
-import {AfterViewInit, Component, inject, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import { AfterViewInit, Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import Category from "../../../models/category";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {NgPipesModule} from "ngx-pipes";
-import {CategoryService} from "../../../services/category.service";
-import {NewCategoryModalComponent} from "../../modals/bills/new-category-modal/new-category-modal.component";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { NgPipesModule } from "ngx-pipes";
+import { CategoryService } from "../../../services/category.service";
+import { NewCategoryModalComponent } from "../../modals/bills/new-category-modal/new-category-modal.component";
 import {
   NgbDropdownModule,
   NgbModal
 } from "@ng-bootstrap/ng-bootstrap";
-import {EditCategoryModalComponent} from "../../modals/bills/edit-category-modal/edit-category-modal.component";
-import {DeleteCategoryModalComponent} from "../../modals/bills/delete-category-modal/delete-category-modal.component";
-import {RouterLink} from "@angular/router";
-import {CategoryBillInfoComponent} from "../../modals/info/category-bill-info/category-bill-info.component";
+import { EditCategoryModalComponent } from "../../modals/bills/edit-category-modal/edit-category-modal.component";
+import { DeleteCategoryModalComponent } from "../../modals/bills/delete-category-modal/delete-category-modal.component";
+import { RouterLink } from "@angular/router";
+import { CategoryBillInfoComponent } from "../../modals/info/category-bill-info/category-bill-info.component";
 import {
   Filter, FilterConfigBuilder,
   MainContainerComponent,
@@ -20,7 +20,7 @@ import {
   TableFiltersComponent,
   ToastService
 } from "ngx-dabd-grupo01";
-import {AsyncPipe, CommonModule, DatePipe} from "@angular/common";
+import { AsyncPipe, CommonModule, DatePipe } from "@angular/common";
 import * as XLSX from 'xlsx';
 import moment from "moment/moment";
 import jsPDF from "jspdf";
@@ -47,7 +47,6 @@ import autoTable from "jspdf-autotable";
   styleUrl: './expenses-category-bill.component.css'
 })
 export class ExpensesCategoryBillComponent implements OnInit, AfterViewInit {
-  // SERVICES
   private toastService = inject(ToastService);
   private categoryService = inject(CategoryService);
   private modalService = inject(NgbModal);
@@ -55,14 +54,13 @@ export class ExpensesCategoryBillComponent implements OnInit, AfterViewInit {
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
 
-  // PAGINATION PROPERTIES
   totalItems = 0;
   page = 1;
   size = 10;
   sortField = 'name';
   sortDirection: 'asc' | 'desc' = 'asc';
   searchParams: { [key: string]: any } = {};
-  // TABLE PROPERTIES
+
   searchTerm = '';
   isLoading = false;
   categories: Category[] = [];
@@ -74,10 +72,10 @@ export class ExpensesCategoryBillComponent implements OnInit, AfterViewInit {
       'isDeleted',
       'Seleccione el Estado',
       [
-                {value: "" , label: "Todas"},
-                {value: 'false', label: 'Activas'},
-                {value: 'true', label: 'Inactivas'}
-              ]
+        { value: "", label: "Todas" },
+        { value: 'false', label: 'Activas' },
+        { value: 'true', label: 'Inactivas' }
+      ]
     ).build()
 
   onFilterValueChange(filters: Record<string, any>) {
@@ -89,7 +87,6 @@ export class ExpensesCategoryBillComponent implements OnInit, AfterViewInit {
     this.loadCategories();
   }
 
-  // Handlers for pagination
   onPageChange = (page: number) => {
     this.page = (page);
     this.loadCategories();
@@ -102,12 +99,12 @@ export class ExpensesCategoryBillComponent implements OnInit, AfterViewInit {
   };
 
   ngOnInit(): void {
-    this.searchParams = { 'isDeleted':'false' };
+    this.searchParams = { 'isDeleted': 'false' };
     this.loadCategories();
   }
 
   ngAfterViewInit(): void {
-    setTimeout(()=>{
+    setTimeout(() => {
       this.columns = [
         { headerName: 'Nombre', accessorKey: 'name' },
         { headerName: 'Descripción', accessorKey: 'description' },
@@ -128,7 +125,7 @@ export class ExpensesCategoryBillComponent implements OnInit, AfterViewInit {
   private loadCategories(): void {
     this.isLoading = true;
     this.categoryService.getPaginatedCategories(
-      this.page -1,
+      this.page - 1,
       this.size,
       this.sortField,
       this.sortDirection,
@@ -138,9 +135,9 @@ export class ExpensesCategoryBillComponent implements OnInit, AfterViewInit {
         this.categories = response.content
         this.totalItems = response.totalElements;
       },
-      error: (error) => {
+      error: () => {
         this.toastService.sendError('Error al cargar categorías');
-        this.categories = []; // Reset a array vacío en caso de error
+        this.categories = [];
         this.totalItems = 0;
       },
       complete: () => {
@@ -213,21 +210,19 @@ export class ExpensesCategoryBillComponent implements OnInit, AfterViewInit {
   }
 
   downloadTable() {
-    this.categoryService.getPaginatedCategories(0,this.totalItems,this.sortField,this.sortDirection,this.searchParams)
-      .subscribe(categories =>
-        {
-          // Mapear los datos a un formato tabular adecuado
-          const data = categories.content.map(category => ({
-            'Nombre': category.name,
-            'Descripcion': category.description
-          }));
-          const fecha = new Date();
-          const finalName = this.fileName + '-' + moment(fecha).format("DD-MM-YYYY_HH-mm");
-          const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-          const wb: XLSX.WorkBook = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(wb, ws, 'Categorias de Gastos');
-          XLSX.writeFile(wb, `${finalName}.xlsx`);
-        }
+    this.categoryService.getPaginatedCategories(0, this.totalItems, this.sortField, this.sortDirection, this.searchParams)
+      .subscribe(categories => {
+        const data = categories.content.map(category => ({
+          'Nombre': category.name,
+          'Descripcion': category.description
+        }));
+        const fecha = new Date();
+        const finalName = this.fileName + '-' + moment(fecha).format("DD-MM-YYYY_HH-mm");
+        const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+        const wb: XLSX.WorkBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Categorias de Gastos');
+        XLSX.writeFile(wb, `${finalName}.xlsx`);
+      }
       )
   }
 
@@ -235,24 +230,20 @@ export class ExpensesCategoryBillComponent implements OnInit, AfterViewInit {
     let doc = new jsPDF();
     doc.setFontSize(18);
     doc.text('Reporte de Categorias de Gastos', 14, 20);
-    this.categoryService.getPaginatedCategories(0,this.totalItems,this.sortField,this.sortDirection,this.searchParams)
+    this.categoryService.getPaginatedCategories(0, this.totalItems, this.sortField, this.sortDirection, this.searchParams)
       .subscribe(categories => {
-        // Usando autoTable para agregar la tabla
         autoTable(doc, {
           startY: 30,
           head: [['Nombre', 'Descripcion']],
           body: categories.content.map(category => [
             category.name,
             category.description
-            ]
+          ]
           ),
         });
-        // Guardar el PDF después de agregar la tabla
         const fecha = new Date();
-        const finalFileName = this.fileName + "-" + moment(fecha).format("DD-MM-YYYY_HH-mm") +".pdf";
+        const finalFileName = this.fileName + "-" + moment(fecha).format("DD-MM-YYYY_HH-mm") + ".pdf";
         doc.save(finalFileName);
       });
-
   }
-
 }

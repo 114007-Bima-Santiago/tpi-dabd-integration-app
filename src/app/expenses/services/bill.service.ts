@@ -17,7 +17,6 @@ export class BillService {
 
   constructor() {}
 
-  //#region Get Bills Methods
   getAllBills(
     size?: number,
     page?: number,
@@ -54,19 +53,9 @@ export class BillService {
     if (status) {
       params = params.set('status', status);
     }
-
-    let result = this.formatBills(
+    return this.formatBills(
       this.http.get<PaginatedResponse<BillDto>>(`${this.url}bills`, { params })
     );
-    result.subscribe({
-      next: (data) => {
-      },
-      error: (error) => {
-        console.error('Error:', error);
-      },
-    });
-
-    return result;
   }
 
   getAllBillsAndPagination(
@@ -106,16 +95,7 @@ export class BillService {
       params = params.set('status', status);
     }
 
-    let result = this.http.get<PaginatedResponse<BillDto>>(`${this.url}bills`, { params });
-    result.subscribe({
-      next: (data) => {
-        console.log('Response Content:', data.content);
-      },
-      error: (error) => {
-        console.error('Error:', error);
-      },
-    });
-    return result;
+    return this.http.get<PaginatedResponse<BillDto>>(`${this.url}bills`, { params });
   }
 
 
@@ -156,24 +136,13 @@ export class BillService {
       params = params.set('status', status);
     }
 
-    let result = this.http.get<PaginatedResponse<BillDto>>(`${this.url}bills`, { params });
-    result.subscribe({
-      next: (data) => {
-      },
-      error: (error) => {
-      },
-    });
-    return result;
+    return this.http.get<PaginatedResponse<any>>(`${this.url}bills`, { params });
   }
-  //#endregion
 
-  //#region Bill Type Methods
   getBillTypes(): Observable<BillType[]> {
     return this.http.get<BillType[]>(`${this.url}bill-type`);
   }
-  //#endregion
 
-  //#region Additional Bill Retrieval Methods
   getAllBillsPaged(
     size: number,
     page: number,
@@ -199,9 +168,7 @@ export class BillService {
 
     return of({ pagination: data, bills: this.formatBills(data) });
   }
-  //#endregion
 
-  //#region Add and Update Bill Methods
   addBill(bill: BillPostRequest): Observable<BillPostRequest> {
     const snakeCaseBill = {
       description: bill.description,
@@ -227,9 +194,7 @@ export class BillService {
     });
     return this.http.put<Bill>(`${this.url}bills/${id}`, updatedBill, { headers });
   }
-  //#endregion
-
-  //#region Utility Methods
+  
   formatBills(
     billsDto$: Observable<PaginatedResponse<BillDto>>
   ): Observable<Bill[]> {
@@ -237,7 +202,6 @@ export class BillService {
       map((response) => {
         const billsDto = response.content;
         if (!Array.isArray(billsDto)) {
-          console.error('La respuesta del servidor no contiene una array');
           return [];
         }
         return billsDto.map(
@@ -275,6 +239,5 @@ export class BillService {
 
     return this.http.patch<Bill>(`${this.url}bills/status`, body , { headers })
   }
-  //#endregion
 }
 

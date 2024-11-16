@@ -33,7 +33,6 @@ export class DeleteBillModalComponent {
           });
         },
         error: (error) => {
-          console.error('Error al modificar el gasto:', error);
           this.activeModal.close({
             success: false,
             message: 'Ha ocurrido un error al modificar el gasto. Por favor, inténtelo de nuevo.',
